@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  TouchableOpacity, 
+  RefreshControl, 
+  Alert 
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, typography, shadows } from '../theme/colors';
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
 import databaseService from '../database';
 
 const AppointmentsAdminScreen = () => {
@@ -29,7 +40,7 @@ const AppointmentsAdminScreen = () => {
   const updateAppointmentStatus = async (id, status) => {
     try {
       await databaseService.updateAppointmentStatus(id, status);
-      await loadAppointments(); // Reload to show updated status
+      await loadAppointments();
       Alert.alert('Success', `Appointment marked as ${status}`);
     } catch (error) {
       console.error('Error updating appointment:', error);
@@ -40,7 +51,7 @@ const AppointmentsAdminScreen = () => {
   const deleteAppointment = async (id) => {
     Alert.alert(
       'Delete Appointment',
-      'Are you sure you want to delete this appointment?',
+      'Are you sure you want to delete this appointment? This action cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -50,7 +61,7 @@ const AppointmentsAdminScreen = () => {
             try {
               await databaseService.deleteAppointment(id);
               await loadAppointments();
-              Alert.alert('Success', 'Appointment deleted');
+              Alert.alert('Success', 'Appointment deleted successfully');
             } catch (error) {
               console.error('Error deleting appointment:', error);
               Alert.alert('Error', 'Failed to delete appointment');
@@ -63,217 +74,356 @@ const AppointmentsAdminScreen = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'confirmed': return '#4CAF50';
-      case 'cancelled': return '#F44336';
-      case 'completed': return '#2196F3';
-      default: return '#FF9800'; // pending
+      case 'confirmed': return colors.success;
+      case 'cancelled': return colors.error;
+      case 'completed': return colors.info;
+      default: return colors.warning; // pending
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'confirmed': return 'checkmark-circle';
+      case 'cancelled': return 'close-circle';
+      case 'completed': return 'checkmark-done-circle';
+      default: return 'time-outline'; // pending
     }
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
-  return (
-    <ScrollView 
-      style={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['#d4af37']}
-          tintColor="#d4af37"
-        />
-      }
-    >
-      <Text style={styles.title}>Appointment Requests</Text>
-      <View style={styles.divider} />
-      
-      {appointments.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No appointments found</Text>
-        </View>
-      ) : (
-        appointments.map((appointment) => (
-          <View key={appointment.id} style={styles.card}>
-            <View style={styles.header}>
-              <Text style={styles.name}>{appointment.name}</Text>
-              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(appointment.status) }]}>
-                <Text style={styles.statusText}>{appointment.status.toUpperCase()}</Text>
-              </View>
-            </View>
-            
-            <Text style={styles.info}>📧 {appointment.email}</Text>
-            <Text style={styles.info}>📞 {appointment.phone}</Text>
-            <Text style={styles.info}>📅 {appointment.date}</Text>
-            
-            {appointment.message && (
-              <Text style={styles.message}>💬 {appointment.message}</Text>
-            )}
-            
-            <Text style={styles.timestamp}>
-              Created: {formatDate(appointment.created_at)}
+  const AppointmentCard = ({ appointment }) => (
+    <Card variant="elevated" style={styles.appointmentCard}>
+      <View style={styles.cardHeader}>
+        <View style={styles.clientInfo}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>
+              {appointment.name.split(' ').map(n => n[0]).join('')}
             </Text>
-            
-            <View style={styles.actions}>
-              {appointment.status === 'pending' && (
-                <>
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.confirmButton]}
-                    onPress={() => updateAppointmentStatus(appointment.id, 'confirmed')}
-                  >
-                    <Ionicons name="checkmark" size={16} color="#fff" />
-                    <Text style={styles.actionButtonText}>Confirm</Text>
-                  </TouchableOpacity>
-                  
-                  <TouchableOpacity
-                    style={[styles.actionButton, styles.cancelButton]}
-                    onPress={() => updateAppointmentStatus(appointment.id, 'cancelled')}
-                  >
-                    <Ionicons name="close" size={16} color="#fff" />
-                    <Text style={styles.actionButtonText}>Cancel</Text>
-                  </TouchableOpacity>
-                </>
-              )}
-              
-              {appointment.status === 'confirmed' && (
-                <TouchableOpacity
-                  style={[styles.actionButton, styles.completeButton]}
-                  onPress={() => updateAppointmentStatus(appointment.id, 'completed')}
-                >
-                  <Ionicons name="checkmark-done" size={16} color="#fff" />
-                  <Text style={styles.actionButtonText}>Complete</Text>
-                </TouchableOpacity>
-              )}
-              
-              <TouchableOpacity
-                style={[styles.actionButton, styles.deleteButton]}
-                onPress={() => deleteAppointment(appointment.id)}
-              >
-                <Ionicons name="trash" size={16} color="#fff" />
-                <Text style={styles.actionButtonText}>Delete</Text>
-              </TouchableOpacity>
+          </View>
+          <View style={styles.nameContainer}>
+            <Text style={styles.clientName}>{appointment.name}</Text>
+            <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(appointment.status)}15` }]}>
+              <Ionicons 
+                name={getStatusIcon(appointment.status)} 
+                size={12} 
+                color={getStatusColor(appointment.status)} 
+              />
+              <Text style={[styles.statusText, { color: getStatusColor(appointment.status) }]}>
+                {appointment.status.toUpperCase()}
+              </Text>
             </View>
           </View>
-        ))
+        </View>
+      </View>
+      
+      <View style={styles.contactInfo}>
+        <View style={styles.infoRow}>
+          <Ionicons name="mail-outline" size={16} color={colors.text.secondary} />
+          <Text style={styles.infoText}>{appointment.email}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Ionicons name="call-outline" size={16} color={colors.text.secondary} />
+          <Text style={styles.infoText}>{appointment.phone}</Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Ionicons name="calendar-outline" size={16} color={colors.text.secondary} />
+          <Text style={styles.infoText}>{appointment.date}</Text>
+        </View>
+      </View>
+      
+      {appointment.message && (
+        <View style={styles.messageContainer}>
+          <View style={styles.messageHeader}>
+            <Ionicons name="chatbubble-outline" size={16} color={colors.text.secondary} />
+            <Text style={styles.messageLabel}>Message</Text>
+          </View>
+          <Text style={styles.messageText}>{appointment.message}</Text>
+        </View>
       )}
-    </ScrollView>
+      
+      <View style={styles.timestampContainer}>
+        <Ionicons name="time-outline" size={12} color={colors.text.tertiary} />
+        <Text style={styles.timestamp}>
+          Created {formatDate(appointment.created_at)}
+        </Text>
+      </View>
+      
+      <View style={styles.actionButtons}>
+        {appointment.status === 'pending' && (
+          <>
+            <Button
+              title="Confirm"
+              onPress={() => updateAppointmentStatus(appointment.id, 'confirmed')}
+              size="small"
+              style={[styles.actionButton, styles.confirmButton]}
+            />
+            <Button
+              title="Cancel"
+              onPress={() => updateAppointmentStatus(appointment.id, 'cancelled')}
+              variant="outlined"
+              size="small"
+              style={[styles.actionButton, styles.cancelButton]}
+            />
+          </>
+        )}
+        
+        {appointment.status === 'confirmed' && (
+          <Button
+            title="Mark Complete"
+            onPress={() => updateAppointmentStatus(appointment.id, 'completed')}
+            size="small"
+            style={[styles.actionButton, styles.completeButton]}
+          />
+        )}
+        
+        <Button
+          title="Delete"
+          onPress={() => deleteAppointment(appointment.id)}
+          variant="outlined"
+          size="small"
+          style={[styles.actionButton, styles.deleteButton]}
+          textStyle={styles.deleteButtonText}
+        />
+      </View>
+    </Card>
+  );
+
+  return (
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary.main]}
+            tintColor={colors.primary.main}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <Card variant="blur" style={styles.headerCard}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="calendar-outline" size={32} color={colors.primary.main} />
+          </View>
+          <Text style={styles.title}>Appointment Requests</Text>
+          <Text style={styles.subtitle}>
+            Manage and track all client appointment requests
+          </Text>
+        </Card>
+        
+        {appointments.length === 0 ? (
+          <Card variant="outlined" style={styles.emptyCard}>
+            <Ionicons name="calendar-outline" size={48} color={colors.text.tertiary} />
+            <Text style={styles.emptyTitle}>No Appointments</Text>
+            <Text style={styles.emptyText}>
+              No appointment requests found. New requests will appear here.
+            </Text>
+          </Card>
+        ) : (
+          <View style={styles.appointmentsContainer}>
+            {appointments.map((appointment) => (
+              <AppointmentCard key={appointment.id} appointment={appointment} />
+            ))}
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0c1c3c',
+    backgroundColor: '#F2F7FF',
+  },
+  scrollContainer: {
+    flexGrow: 1,
     padding: 20,
+  },
+  headerCard: {
+    alignItems: 'center',
+    padding: 24,
+    marginBottom: 20,
+  },
+  iconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    ...shadows.small,
   },
   title: {
-    fontSize: 26,
-    color: '#d4af37',
-    fontWeight: 'bold',
+    ...typography.title1,
+    color: colors.text.primary,
+    textAlign: 'center',
     marginBottom: 8,
-    letterSpacing: 1.2,
+    fontWeight: '700',
+  },
+  subtitle: {
+    ...typography.callout,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
-  divider: {
-    height: 1.5,
-    backgroundColor: '#d4af37',
-    opacity: 0.18,
-    marginBottom: 18,
-    borderRadius: 1,
-    width: '80%',
-    alignSelf: 'center',
+  appointmentsContainer: {
+    gap: 16,
   },
-  card: {
-    backgroundColor: 'rgba(24, 40, 72, 0.97)',
-    borderRadius: 16,
+  appointmentCard: {
     padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 6,
   },
-  header: {
+  cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
+    alignItems: 'flex-start',
+    marginBottom: 16,
   },
-  name: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  clientInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
   },
-  statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+  avatar: {
+    width: 48,
+    height: 48,
     borderRadius: 12,
+    backgroundColor: colors.primary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
-  statusText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: 'bold',
+  avatarText: {
+    ...typography.callout,
+    color: colors.text.inverse,
+    fontWeight: '700',
   },
-  info: {
-    color: '#bbb',
-    fontSize: 14,
+  nameContainer: {
+    flex: 1,
+  },
+  clientName: {
+    ...typography.headline,
+    color: colors.text.primary,
+    fontWeight: '700',
     marginBottom: 4,
   },
-  message: {
-    color: '#ddd',
-    fontSize: 14,
-    fontStyle: 'italic',
-    marginTop: 8,
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  statusText: {
+    ...typography.caption2,
+    fontWeight: '600',
+    marginLeft: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  contactInfo: {
+    backgroundColor: colors.background.secondary,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  timestamp: {
-    color: '#888',
-    fontSize: 12,
-    marginTop: 8,
-    marginBottom: 12,
+  infoText: {
+    ...typography.callout,
+    color: colors.text.primary,
+    marginLeft: 12,
+    flex: 1,
   },
-  actions: {
+  messageContainer: {
+    backgroundColor: colors.background.secondary,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+  },
+  messageHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  messageLabel: {
+    ...typography.subhead,
+    color: colors.text.secondary,
+    marginLeft: 8,
+    fontWeight: '600',
+  },
+  messageText: {
+    ...typography.callout,
+    color: colors.text.primary,
+    lineHeight: 20,
+    fontStyle: 'italic',
+  },
+  timestampContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  timestamp: {
+    ...typography.caption1,
+    color: colors.text.tertiary,
+    marginLeft: 6,
+  },
+  actionButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
   actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    flex: 1,
     minWidth: 80,
   },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '600',
-    marginLeft: 4,
-  },
   confirmButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
   },
   cancelButton: {
-    backgroundColor: '#F44336',
+    borderColor: colors.error,
   },
   completeButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: colors.info,
   },
   deleteButton: {
-    backgroundColor: '#757575',
+    borderColor: colors.error,
   },
-  emptyContainer: {
+  deleteButtonText: {
+    color: colors.error,
+  },
+  emptyCard: {
     alignItems: 'center',
-    marginTop: 50,
+    padding: 40,
+  },
+  emptyTitle: {
+    ...typography.headline,
+    color: colors.text.primary,
+    marginTop: 16,
+    marginBottom: 8,
+    fontWeight: '600',
   },
   emptyText: {
-    color: '#fff',
-    fontSize: 18,
+    ...typography.callout,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
 

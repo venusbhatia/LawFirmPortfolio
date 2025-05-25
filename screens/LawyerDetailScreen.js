@@ -1,6 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Linking, Alert } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  Image, 
+  ScrollView, 
+  TouchableOpacity, 
+  Linking, 
+  Alert 
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { colors, typography, shadows } from '../theme/colors';
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
 
 const LawyerDetailScreen = ({ route, navigation }) => {
   const { lawyer } = route.params || {};
@@ -8,14 +20,17 @@ const LawyerDetailScreen = ({ route, navigation }) => {
   // Handle case where lawyer is undefined
   if (!lawyer) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={styles.errorText}>Lawyer information not found</Text>
-        <TouchableOpacity 
-          style={styles.primaryButton} 
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.primaryButtonText}>Go Back</Text>
-        </TouchableOpacity>
+      <View style={[styles.container, styles.errorContainer]}>
+        <Card variant="elevated" style={styles.errorCard}>
+          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
+          <Text style={styles.errorTitle}>Lawyer Not Found</Text>
+          <Text style={styles.errorText}>The lawyer information could not be loaded.</Text>
+          <Button
+            title="Go Back"
+            onPress={() => navigation.goBack()}
+            style={styles.errorButton}
+          />
+        </Card>
       </View>
     );
   }
@@ -47,178 +62,319 @@ const LawyerDetailScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.card}>
-        <Image source={{ uri: lawyer.image }} style={styles.image} />
-        <Text style={styles.name}>{lawyer.name}</Text>
-        <Text style={styles.specialty}>{lawyer.specialty}</Text>
-        <View style={styles.divider} />
-        <Text style={styles.experience}>{lawyer.experience} of experience</Text>
-        
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Profile Header */}
+        <Card variant="blur" style={styles.profileCard}>
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: lawyer.image }} style={styles.image} />
+            <View style={styles.onlineIndicator} />
+          </View>
+          
+          <Text style={styles.name}>{lawyer.name}</Text>
+          
+          <View style={styles.specialtyBadge}>
+            <Text style={styles.specialty}>{lawyer.specialty}</Text>
+          </View>
+          
+          <View style={styles.experienceContainer}>
+            <Ionicons name="briefcase-outline" size={16} color={colors.text.secondary} />
+            <Text style={styles.experience}>{lawyer.experience} of experience</Text>
+          </View>
+        </Card>
+
         {/* Contact Information */}
-        <View style={styles.contactSection}>
+        <Card variant="elevated" style={styles.contactCard}>
+          <Text style={styles.sectionTitle}>Contact Information</Text>
+          
           {lawyer.email && (
             <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
-              <Ionicons name="mail-outline" size={20} color="#d4af37" />
-              <Text style={styles.contactText}>{lawyer.email}</Text>
+              <View style={styles.contactIcon}>
+                <Ionicons name="mail-outline" size={20} color={colors.primary.main} />
+              </View>
+              <View style={styles.contactInfo}>
+                <Text style={styles.contactLabel}>Email</Text>
+                <Text style={styles.contactValue}>{lawyer.email}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
             </TouchableOpacity>
           )}
           
           {lawyer.phone && (
             <TouchableOpacity style={styles.contactItem} onPress={handlePhonePress}>
-              <Ionicons name="call-outline" size={20} color="#d4af37" />
-              <Text style={styles.contactText}>{lawyer.phone}</Text>
+              <View style={styles.contactIcon}>
+                <Ionicons name="call-outline" size={20} color={colors.primary.main} />
+              </View>
+              <View style={styles.contactInfo}>
+                <Text style={styles.contactLabel}>Phone</Text>
+                <Text style={styles.contactValue}>{lawyer.phone}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
             </TouchableOpacity>
           )}
-        </View>
+        </Card>
 
         {/* Biography */}
-        <Text style={styles.bio}>
-          {lawyer.bio || `${lawyer.name} is an experienced ${lawyer.specialty} attorney who has been helping clients for ${lawyer.experience}. Trusted and respected in the legal field.`}
-        </Text>
+        <Card variant="outlined" style={styles.bioCard}>
+          <Text style={styles.sectionTitle}>About</Text>
+          <Text style={styles.bio}>
+            {lawyer.bio || `${lawyer.name} is an experienced ${lawyer.specialty} attorney who has been helping clients for ${lawyer.experience}. With a commitment to excellence and client satisfaction, ${lawyer.name.split(' ')[0]} provides trusted legal representation and guidance tailored to each client's unique needs.`}
+          </Text>
+        </Card>
+
+        {/* Expertise */}
+        <Card variant="elevated" style={styles.expertiseCard}>
+          <Text style={styles.sectionTitle}>Areas of Expertise</Text>
+          <View style={styles.expertiseGrid}>
+            <View style={styles.expertiseItem}>
+              <View style={styles.expertiseIcon}>
+                <Text style={styles.expertiseEmoji}>⚖️</Text>
+              </View>
+              <Text style={styles.expertiseText}>Legal Consultation</Text>
+            </View>
+            <View style={styles.expertiseItem}>
+              <View style={styles.expertiseIcon}>
+                <Text style={styles.expertiseEmoji}>📋</Text>
+              </View>
+              <Text style={styles.expertiseText}>Case Analysis</Text>
+            </View>
+            <View style={styles.expertiseItem}>
+              <View style={styles.expertiseIcon}>
+                <Text style={styles.expertiseEmoji}>🏛️</Text>
+              </View>
+              <Text style={styles.expertiseText}>Court Representation</Text>
+            </View>
+            <View style={styles.expertiseItem}>
+              <View style={styles.expertiseIcon}>
+                <Text style={styles.expertiseEmoji}>📄</Text>
+              </View>
+              <Text style={styles.expertiseText}>Legal Documentation</Text>
+            </View>
+          </View>
+        </Card>
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.primaryButton} onPress={handleBookAppointment}>
-            <Ionicons name="calendar-outline" size={20} color="#182848" />
-            <Text style={styles.primaryButtonText}>Book Appointment</Text>
-          </TouchableOpacity>
+          <Button
+            title="Book Appointment"
+            onPress={handleBookAppointment}
+            size="large"
+            style={styles.primaryAction}
+          />
           
-          {lawyer.email && (
-            <TouchableOpacity style={styles.secondaryButton} onPress={handleEmailPress}>
-              <Ionicons name="mail-outline" size={18} color="#d4af37" />
-              <Text style={styles.secondaryButtonText}>Send Email</Text>
-            </TouchableOpacity>
-          )}
+          <View style={styles.secondaryActions}>
+            {lawyer.email && (
+              <Button
+                title="Send Email"
+                onPress={handleEmailPress}
+                variant="outlined"
+                style={styles.secondaryAction}
+              />
+            )}
+            {lawyer.phone && (
+              <Button
+                title="Call Now"
+                onPress={handlePhonePress}
+                variant="outlined"
+                style={styles.secondaryAction}
+              />
+            )}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0c1c3c',
+    backgroundColor: '#F2F7FF',
+  },
+  scrollContainer: {
+    flexGrow: 1,
     padding: 20,
   },
-  card: {
-    backgroundColor: 'rgba(24, 40, 72, 0.97)',
-    borderRadius: 24,
-    padding: 32,
+  errorContainer: {
+    justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    elevation: 8,
+  },
+  errorCard: {
+    alignItems: 'center',
+    padding: 32,
+    margin: 20,
+  },
+  errorTitle: {
+    ...typography.title2,
+    color: colors.text.primary,
+    marginTop: 16,
+    marginBottom: 8,
+    fontWeight: '700',
+  },
+  errorText: {
+    ...typography.callout,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  errorButton: {
+    marginTop: 8,
+  },
+  profileCard: {
+    alignItems: 'center',
+    padding: 32,
+    marginBottom: 20,
+  },
+  imageContainer: {
+    position: 'relative',
+    marginBottom: 20,
   },
   image: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    marginVertical: 20,
-    borderWidth: 2,
-    borderColor: '#d4af37',
-    backgroundColor: '#fff',
+    width: 120,
+    height: 120,
+    borderRadius: 30,
+    backgroundColor: colors.background.secondary,
+    ...shadows.large,
+  },
+  onlineIndicator: {
+    position: 'absolute',
+    bottom: 4,
+    right: 4,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.success,
+    borderWidth: 3,
+    borderColor: colors.background.card,
   },
   name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 4,
-    letterSpacing: 1,
+    ...typography.title1,
+    color: colors.text.primary,
     textAlign: 'center',
+    marginBottom: 12,
+    fontWeight: '800',
+  },
+  specialtyBadge: {
+    backgroundColor: colors.background.secondary,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   specialty: {
-    fontSize: 18,
-    color: '#d4af37',
-    marginTop: 2,
+    ...typography.callout,
+    color: colors.primary.main,
     fontWeight: '600',
-    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  divider: {
-    height: 1.5,
-    backgroundColor: '#d4af37',
-    opacity: 0.18,
-    marginVertical: 16,
-    borderRadius: 1,
-    width: '60%',
+  experienceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   experience: {
-    fontSize: 16,
-    color: '#ccc',
-    marginBottom: 20,
-    textAlign: 'center',
+    ...typography.callout,
+    color: colors.text.secondary,
+    marginLeft: 6,
   },
-  contactSection: {
-    width: '100%',
+  contactCard: {
+    padding: 20,
     marginBottom: 20,
+  },
+  sectionTitle: {
+    ...typography.headline,
+    color: colors.text.primary,
+    marginBottom: 16,
+    fontWeight: '700',
   },
   contactItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(52, 80, 123, 0.5)',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.border.light,
   },
-  contactText: {
-    color: '#fff',
-    fontSize: 16,
-    marginLeft: 12,
+  contactIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  contactInfo: {
     flex: 1,
   },
+  contactLabel: {
+    ...typography.subhead,
+    color: colors.text.secondary,
+    marginBottom: 2,
+  },
+  contactValue: {
+    ...typography.callout,
+    color: colors.text.primary,
+    fontWeight: '500',
+  },
+  bioCard: {
+    padding: 20,
+    marginBottom: 20,
+  },
   bio: {
-    fontSize: 16,
-    color: '#bbb',
+    ...typography.callout,
+    color: colors.text.secondary,
+    lineHeight: 22,
+  },
+  expertiseCard: {
+    padding: 20,
+    marginBottom: 24,
+  },
+  expertiseGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  expertiseItem: {
+    width: '48%',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  expertiseIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+    ...shadows.small,
+  },
+  expertiseEmoji: {
+    fontSize: 20,
+  },
+  expertiseText: {
+    ...typography.caption1,
+    color: colors.text.primary,
     textAlign: 'center',
-    marginBottom: 25,
-    lineHeight: 24,
+    fontWeight: '500',
   },
   actionButtons: {
-    width: '100%',
+    marginBottom: 20,
+  },
+  primaryAction: {
+    marginBottom: 16,
+  },
+  secondaryActions: {
+    flexDirection: 'row',
     gap: 12,
   },
-  primaryButton: {
-    backgroundColor: '#d4af37',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  primaryButtonText: {
-    color: '#182848',
-    fontSize: 17,
-    fontWeight: 'bold',
-    marginLeft: 8,
-    letterSpacing: 0.5,
-  },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#d4af37',
-  },
-  secondaryButtonText: {
-    color: '#d4af37',
-    fontSize: 16,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  errorText: {
-    color: '#fff',
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: 'center',
+  secondaryAction: {
+    flex: 1,
   },
 });
 

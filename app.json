@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#0c1c3c"
-      }
+      },
+      "package": "com.yourcompany.lawfirmportfolio"
     },
     "web": {
       "favicon": "./assets/splash.png"

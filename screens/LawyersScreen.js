@@ -1,5 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, RefreshControl, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  Image, 
+  ScrollView, 
+  TouchableOpacity, 
+  RefreshControl, 
+  ActivityIndicator 
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, typography, shadows } from '../theme/colors';
+import { Card } from '../components/Card';
 import databaseService from '../database';
 
 const LawyersScreen = ({ navigation }) => {
@@ -24,7 +36,7 @@ const LawyersScreen = ({ navigation }) => {
           experience: '20 years',
           image: 'https://randomuser.me/api/portraits/men/32.jpg',
           bio: 'Richard Davis is a seasoned criminal defense attorney with over 20 years of experience.',
-          email: 'richard.davis@lawfirm.com',
+          email: 'richard.davis@legalcare.com',
           phone: '(555) 123-4567'
         },
         {
@@ -34,8 +46,18 @@ const LawyersScreen = ({ navigation }) => {
           experience: '15 years',
           image: 'https://randomuser.me/api/portraits/women/44.jpg',
           bio: 'Jane Smith specializes in family law matters with compassionate service.',
-          email: 'jane.smith@lawfirm.com',
+          email: 'jane.smith@legalcare.com',
           phone: '(555) 234-5678'
+        },
+        {
+          id: 3,
+          name: 'Michael Johnson',
+          specialty: 'Corporate Law',
+          experience: '18 years',
+          image: 'https://randomuser.me/api/portraits/men/45.jpg',
+          bio: 'Michael Johnson provides expert corporate legal counsel for businesses.',
+          email: 'michael.johnson@legalcare.com',
+          phone: '(555) 345-6789'
         }
       ];
       setLawyers(fallbackLawyers);
@@ -66,150 +88,238 @@ const LawyersScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={[styles.container, styles.centered]}>
-        <ActivityIndicator size="large" color="#d4af37" />
-        <Text style={styles.loadingText}>Loading lawyers...</Text>
+        <ActivityIndicator size="large" color={colors.primary.main} />
+        <Text style={styles.loadingText}>Loading our legal team...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView 
-      style={styles.container}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['#d4af37']}
-          tintColor="#d4af37"
-        />
-      }
-    >
-      <Text style={styles.title}>Our Lawyers</Text>
-      <View style={styles.divider} />
-      
-      {lawyers.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No lawyers found</Text>
-          <Text style={styles.emptySubtext}>Pull down to refresh</Text>
-        </View>
-      ) : (
-        lawyers.map((lawyer) => (
-          <TouchableOpacity
-            key={lawyer.id}
-            style={styles.card}
-            activeOpacity={0.85}
-            onPress={() => navigation.navigate('LawyerDetail', { lawyer: lawyer })}
-          >
-            <Image source={{ uri: lawyer.image }} style={styles.image} />
-            <View style={styles.info}>
-              <Text style={styles.name}>{lawyer.name}</Text>
-              <Text style={styles.specialty}>{lawyer.specialty}</Text>
-              <Text style={styles.experience}>{lawyer.experience} of experience</Text>
-              {lawyer.email && (
-                <Text style={styles.contact}>{lawyer.email}</Text>
-              )}
-              {lawyer.phone && (
-                <Text style={styles.contact}>{lawyer.phone}</Text>
-              )}
-            </View>
-          </TouchableOpacity>
-        ))
-      )}
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[colors.primary.main]}
+            tintColor={colors.primary.main}
+          />
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <Card variant="blur" style={styles.headerCard}>
+          <View style={styles.iconContainer}>
+            <Ionicons name="people-outline" size={32} color={colors.primary.main} />
+          </View>
+          <Text style={styles.title}>Our Legal Team</Text>
+          <Text style={styles.subtitle}>
+            Meet our experienced attorneys dedicated to serving you
+          </Text>
+        </Card>
+        
+        {lawyers.length === 0 ? (
+          <Card variant="outlined" style={styles.emptyCard}>
+            <Ionicons name="people-outline" size={48} color={colors.text.tertiary} />
+            <Text style={styles.emptyText}>No lawyers found</Text>
+            <Text style={styles.emptySubtext}>Pull down to refresh</Text>
+          </Card>
+        ) : (
+          lawyers.map((lawyer) => (
+            <Card
+              key={lawyer.id}
+              variant="elevated"
+              onPress={() => navigation.navigate('LawyerDetail', { lawyer: lawyer })}
+              style={styles.lawyerCard}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.imageContainer}>
+                  <Image source={{ uri: lawyer.image }} style={styles.image} />
+                  <View style={styles.onlineIndicator} />
+                </View>
+                
+                <View style={styles.info}>
+                  <Text style={styles.name}>{lawyer.name}</Text>
+                  <View style={styles.specialtyContainer}>
+                    <View style={styles.specialtyBadge}>
+                      <Text style={styles.specialty}>{lawyer.specialty}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.experienceContainer}>
+                    <Ionicons name="briefcase-outline" size={14} color={colors.text.secondary} />
+                    <Text style={styles.experience}>{lawyer.experience} of experience</Text>
+                  </View>
+                  
+                  <View style={styles.contactRow}>
+                    {lawyer.email && (
+                      <View style={styles.contactItem}>
+                        <Ionicons name="mail-outline" size={12} color={colors.text.tertiary} />
+                        <Text style={styles.contact} numberOfLines={1}>{lawyer.email}</Text>
+                      </View>
+                    )}
+                    {lawyer.phone && (
+                      <View style={styles.contactItem}>
+                        <Ionicons name="call-outline" size={12} color={colors.text.tertiary} />
+                        <Text style={styles.contact}>{lawyer.phone}</Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+                
+                <View style={styles.chevronContainer}>
+                  <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+                </View>
+              </View>
+            </Card>
+          ))
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0c1c3c',
-    padding: 20,
+    backgroundColor: '#F2F7FF',
   },
   centered: {
     justifyContent: 'center',
     alignItems: 'center',
   },
+  scrollContainer: {
+    flexGrow: 1,
+    padding: 20,
+  },
+  headerCard: {
+    alignItems: 'center',
+    padding: 24,
+    marginBottom: 20,
+  },
+  iconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    ...shadows.small,
+  },
   title: {
-    fontSize: 26,
-    color: '#d4af37',
-    fontWeight: 'bold',
+    ...typography.title1,
+    color: colors.text.primary,
+    textAlign: 'center',
     marginBottom: 8,
-    letterSpacing: 1.2,
+    fontWeight: '700',
+  },
+  subtitle: {
+    ...typography.callout,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
-  divider: {
-    height: 1.5,
-    backgroundColor: '#d4af37',
-    opacity: 0.18,
-    marginBottom: 18,
-    borderRadius: 1,
-    width: '80%',
-    alignSelf: 'center',
+  lawyerCard: {
+    marginBottom: 16,
+    padding: 20,
   },
-  card: {
+  cardContent: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(52, 80, 123, 0.95)',
-    borderRadius: 16,
-    marginBottom: 20,
-    padding: 18,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.13,
-    shadowRadius: 10,
-    elevation: 6,
+  },
+  imageContainer: {
+    position: 'relative',
+    marginRight: 16,
   },
   image: {
-    width: 74,
-    height: 74,
-    borderRadius: 50,
-    marginRight: 18,
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: colors.background.secondary,
+    ...shadows.small,
+  },
+  onlineIndicator: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: colors.success,
     borderWidth: 2,
-    borderColor: '#d4af37',
-    backgroundColor: '#fff',
+    borderColor: colors.background.card,
   },
   info: {
     flex: 1,
   },
   name: {
-    color: '#fff',
-    fontSize: 19,
-    fontWeight: 'bold',
-    marginBottom: 2,
+    ...typography.headline,
+    color: colors.text.primary,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  specialtyContainer: {
+    marginBottom: 8,
+  },
+  specialtyBadge: {
+    backgroundColor: colors.background.secondary,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+    borderWidth: 0.5,
+    borderColor: colors.border.light,
   },
   specialty: {
-    color: '#d4af37',
-    fontSize: 16,
+    ...typography.caption1,
+    color: colors.primary.main,
     fontWeight: '600',
-    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  experienceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
   },
   experience: {
-    color: '#bbb',
-    fontSize: 14,
-    marginBottom: 2,
+    ...typography.subhead,
+    color: colors.text.secondary,
+    marginLeft: 6,
+  },
+  contactRow: {
+    gap: 8,
+  },
+  contactItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   contact: {
-    color: '#aaa',
-    fontSize: 12,
-    marginTop: 1,
+    ...typography.caption2,
+    color: colors.text.tertiary,
+    marginLeft: 4,
+    flex: 1,
+  },
+  chevronContainer: {
+    marginLeft: 12,
   },
   loadingText: {
-    color: '#d4af37',
-    fontSize: 16,
-    marginTop: 10,
+    ...typography.callout,
+    color: colors.text.secondary,
+    marginTop: 16,
   },
-  emptyContainer: {
+  emptyCard: {
     alignItems: 'center',
-    marginTop: 50,
+    padding: 40,
   },
   emptyText: {
-    color: '#fff',
-    fontSize: 18,
+    ...typography.headline,
+    color: colors.text.primary,
+    marginTop: 16,
     marginBottom: 8,
   },
   emptySubtext: {
-    color: '#bbb',
-    fontSize: 14,
+    ...typography.callout,
+    color: colors.text.secondary,
   },
 });
 

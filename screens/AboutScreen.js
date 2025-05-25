@@ -1,14 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { colors, typography, shadows } from '../theme/colors';
+import { Card } from '../components/Card';
 
 const AboutScreen = () => {
   return (
-    <View style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.card}>
-          <Text style={styles.title}>About Our Law Firm</Text>
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <Card variant="blur" style={styles.heroCard}>
+          <Text style={styles.title}>About LegalCare</Text>
           <Text style={styles.description}>
-            Trusted legal representation since 1992. Our team brings decades of experience, professionalism, and compassion to every case.
+            Trusted legal representation since 1992. Our team brings decades of experience, 
+            professionalism, and compassion to every case we handle.
           </Text>
 
           <View style={styles.statsContainer}>
@@ -25,120 +31,176 @@ const AboutScreen = () => {
               <Text style={styles.statLabel}>Cases Won</Text>
             </View>
           </View>
+        </Card>
 
-          <View style={styles.divider} />
-
+        <Card variant="elevated" style={styles.missionCard}>
           <Text style={styles.missionTitle}>Our Mission</Text>
           <Text style={styles.missionText}>
-            To uphold justice and deliver client-focused legal solutions that make a real difference. We pride ourselves on professionalism, ethics, and empathy.
+            To uphold justice and deliver client-focused legal solutions that make a real difference. 
+            We pride ourselves on professionalism, ethics, and unwavering commitment to our clients.
           </Text>
-        </View>
+        </Card>
+
+        <Card variant="outlined" style={styles.valuesCard}>
+          <Text style={styles.valuesTitle}>Our Values</Text>
+          
+          <View style={styles.valueItem}>
+            <View style={styles.valueIcon}>
+              <Text style={styles.valueEmoji}>⚖️</Text>
+            </View>
+            <View style={styles.valueContent}>
+              <Text style={styles.valueLabel}>Justice</Text>
+              <Text style={styles.valueDescription}>
+                Committed to fairness and equality in every case
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.valueItem}>
+            <View style={styles.valueIcon}>
+              <Text style={styles.valueEmoji}>🤝</Text>
+            </View>
+            <View style={styles.valueContent}>
+              <Text style={styles.valueLabel}>Trust</Text>
+              <Text style={styles.valueDescription}>
+                Building lasting relationships through transparency
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.valueItem}>
+            <View style={styles.valueIcon}>
+              <Text style={styles.valueEmoji}>💡</Text>
+            </View>
+            <View style={styles.valueContent}>
+              <Text style={styles.valueLabel}>Excellence</Text>
+              <Text style={styles.valueDescription}>
+                Delivering exceptional results with expertise
+              </Text>
+            </View>
+          </View>
+        </Card>
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: '#f9fafc',
+    backgroundColor: '#F2F7FF',
   },
   scrollContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
+    padding: 20,
   },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 28,
+  heroCard: {
     padding: 32,
-    width: '100%',
-    maxWidth: 420,
-    shadowColor: '#35507b',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 18,
-    elevation: 8,
+    marginBottom: 20,
     alignItems: 'center',
   },
   title: {
-    fontSize: 28,
-    color: '#182848',
-    fontWeight: '800',
+    ...typography.largeTitle,
+    color: colors.text.primary,
     textAlign: 'center',
-    marginVertical: 16,
-    letterSpacing: 1.2,
-    fontFamily: 'System',
+    marginBottom: 16,
+    fontWeight: '800',
   },
   description: {
-    color: '#35507b',
-    fontSize: 17,
+    ...typography.body,
+    color: colors.text.secondary,
     textAlign: 'center',
-    marginBottom: 28,
-    lineHeight: 25,
-    fontWeight: '500',
-    opacity: 0.85,
+    marginBottom: 30,
+    lineHeight: 24,
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 28,
-    marginTop: 8,
     width: '100%',
+    marginTop: 10,
   },
   statCard: {
     alignItems: 'center',
-    backgroundColor: '#f7f8fa',
+    backgroundColor: colors.background.secondary,
     borderRadius: 16,
-    paddingVertical: 14,
-    paddingHorizontal: 22,
-    marginHorizontal: 4,
-    shadowColor: '#d4af37',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    flex: 1,
+    marginHorizontal: 6,
+    ...shadows.small,
     borderWidth: 0.5,
-    borderColor: '#e5e7ef',
+    borderColor: colors.border.light,
   },
   statNumber: {
-    fontSize: 22,
-    color: '#182848',
-    fontWeight: 'bold',
-    marginBottom: 2,
-    letterSpacing: 0.5,
+    ...typography.title2,
+    color: colors.primary.main,
+    fontWeight: '800',
+    marginBottom: 4,
   },
   statLabel: {
-    color: '#d4af37',
-    fontSize: 14,
+    ...typography.caption1,
+    color: colors.text.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
     fontWeight: '600',
-    letterSpacing: 0.2,
   },
-  divider: {
-    height: 1.5,
-    backgroundColor: '#d4af37',
-    opacity: 0.18,
-    marginVertical: 22,
-    borderRadius: 1,
-    width: '70%',
-    alignSelf: 'center',
+  missionCard: {
+    padding: 24,
+    marginBottom: 20,
   },
   missionTitle: {
-    fontSize: 21,
-    color: '#182848',
+    ...typography.title2,
+    color: colors.text.primary,
+    marginBottom: 12,
     fontWeight: '700',
-    marginBottom: 10,
-    textAlign: 'center',
-    letterSpacing: 1,
-    fontFamily: 'System',
   },
   missionText: {
-    color: '#35507b',
-    fontSize: 16,
+    ...typography.body,
+    color: colors.text.secondary,
     lineHeight: 24,
-    textAlign: 'center',
-    opacity: 0.85,
-    fontWeight: '500',
+  },
+  valuesCard: {
+    padding: 24,
+    marginBottom: 20,
+  },
+  valuesTitle: {
+    ...typography.title2,
+    color: colors.text.primary,
+    marginBottom: 20,
+    fontWeight: '700',
+  },
+  valueItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  valueIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+    ...shadows.small,
+  },
+  valueEmoji: {
+    fontSize: 24,
+  },
+  valueContent: {
+    flex: 1,
+    paddingTop: 2,
+  },
+  valueLabel: {
+    ...typography.headline,
+    color: colors.text.primary,
+    marginBottom: 4,
+    fontWeight: '600',
+  },
+  valueDescription: {
+    ...typography.callout,
+    color: colors.text.secondary,
+    lineHeight: 20,
   },
 });
 

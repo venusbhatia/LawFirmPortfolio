@@ -1,10 +1,31 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TextInput, 
+  TouchableOpacity, 
+  Alert, 
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors, typography, shadows } from '../theme/colors';
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
 import databaseService from '../database';
 
 const AppointmentBookingScreen = () => {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', date: '', message: '' });
+  const [form, setForm] = useState({ 
+    name: '', 
+    email: '', 
+    phone: '', 
+    date: '', 
+    message: '' 
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [focusedField, setFocusedField] = useState(null);
 
   const handleChange = (key, value) => setForm({ ...form, [key]: value });
 
@@ -68,147 +89,238 @@ const AppointmentBookingScreen = () => {
     }
   };
 
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.card}>
-        <Text style={styles.title}>Book an Appointment</Text>
-        <View style={styles.divider} />
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Full Name *"
-          placeholderTextColor="#bbb"
-          value={form.name}
-          onChangeText={text => handleChange('name', text)}
-          editable={!isSubmitting}
-        />
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Email Address *"
-          placeholderTextColor="#bbb"
-          value={form.email}
-          onChangeText={text => handleChange('email', text)}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          editable={!isSubmitting}
-        />
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Phone Number *"
-          placeholderTextColor="#bbb"
-          value={form.phone}
-          onChangeText={text => handleChange('phone', text)}
-          keyboardType="phone-pad"
-          editable={!isSubmitting}
-        />
-        
-        <TextInput
-          style={styles.input}
-          placeholder="Preferred Date & Time *"
-          placeholderTextColor="#bbb"
-          value={form.date}
-          onChangeText={text => handleChange('date', text)}
-          editable={!isSubmitting}
-        />
-        
-        <TextInput
-          style={[styles.input, { height: 80 }]}
-          placeholder="Additional Message (Optional)"
-          placeholderTextColor="#bbb"
-          value={form.message}
-          onChangeText={text => handleChange('message', text)}
-          multiline
-          textAlignVertical="top"
-          editable={!isSubmitting}
-        />
-        
-        <TouchableOpacity 
-          style={[styles.button, isSubmitting && styles.buttonDisabled]} 
-          onPress={handleSubmit}
-          disabled={isSubmitting}
-        >
-          <Text style={styles.buttonText}>
-            {isSubmitting ? 'Submitting...' : 'Submit Appointment Request'}
-          </Text>
-        </TouchableOpacity>
-        
-        <Text style={styles.note}>
-          * Required fields. We'll contact you within 24 hours to confirm your appointment.
-        </Text>
+  const renderInput = (placeholder, key, options = {}) => {
+    const isFocused = focusedField === key;
+    const hasValue = form[key].length > 0;
+    
+    return (
+      <View style={styles.inputContainer}>
+        <View style={[
+          styles.inputWrapper,
+          isFocused && styles.inputFocused,
+          hasValue && styles.inputFilled
+        ]}>
+          <TextInput
+            style={styles.input}
+            placeholder={placeholder}
+            placeholderTextColor={colors.text.tertiary}
+            value={form[key]}
+            onChangeText={text => handleChange(key, text)}
+            onFocus={() => setFocusedField(key)}
+            onBlur={() => setFocusedField(null)}
+            editable={!isSubmitting}
+            {...options}
+          />
+          {hasValue && (
+            <TouchableOpacity 
+              style={styles.clearButton}
+              onPress={() => handleChange(key, '')}
+            >
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
-    </ScrollView>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoid}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          <Card variant="blur" style={styles.headerCard}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="calendar-outline" size={32} color={colors.primary.main} />
+            </View>
+            <Text style={styles.title}>Book an Appointment</Text>
+            <Text style={styles.subtitle}>
+              Schedule a consultation with our legal experts
+            </Text>
+          </Card>
+          
+          <Card variant="elevated" style={styles.formCard}>
+            {renderInput('Full Name *', 'name', {
+              autoCapitalize: 'words',
+              textContentType: 'name'
+            })}
+            
+            {renderInput('Email Address *', 'email', {
+              keyboardType: 'email-address',
+              autoCapitalize: 'none',
+              textContentType: 'emailAddress'
+            })}
+            
+            {renderInput('Phone Number *', 'phone', {
+              keyboardType: 'phone-pad',
+              textContentType: 'telephoneNumber'
+            })}
+            
+            {renderInput('Preferred Date & Time *', 'date', {
+              placeholder: 'e.g., Monday, Jan 15 at 2:00 PM'
+            })}
+            
+            <View style={styles.inputContainer}>
+              <View style={[
+                styles.inputWrapper,
+                styles.textAreaWrapper,
+                focusedField === 'message' && styles.inputFocused,
+                form.message.length > 0 && styles.inputFilled
+              ]}>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  placeholder="Additional Message (Optional)"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={form.message}
+                  onChangeText={text => handleChange('message', text)}
+                  onFocus={() => setFocusedField('message')}
+                  onBlur={() => setFocusedField(null)}
+                  multiline
+                  textAlignVertical="top"
+                  editable={!isSubmitting}
+                />
+                {form.message.length > 0 && (
+                  <TouchableOpacity 
+                    style={[styles.clearButton, styles.textAreaClear]}
+                    onPress={() => handleChange('message', '')}
+                  >
+                    <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+            
+            <Button 
+              title={isSubmitting ? 'Submitting...' : 'Submit Request'}
+              onPress={handleSubmit}
+              disabled={isSubmitting}
+              loading={isSubmitting}
+              size="large"
+              style={styles.submitButton}
+            />
+            
+            <View style={styles.noteContainer}>
+              <Ionicons name="information-circle-outline" size={16} color={colors.text.tertiary} />
+              <Text style={styles.note}>
+                Required fields marked with *. We'll contact you within 24 hours to confirm.
+              </Text>
+            </View>
+          </Card>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#F2F7FF',
+  },
+  keyboardAvoid: {
+    flex: 1,
+  },
+  scrollContainer: {
     flexGrow: 1,
-    backgroundColor: '#0c1c3c',
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
   },
-  card: {
-    backgroundColor: 'rgba(24, 40, 72, 0.97)',
-    borderRadius: 24,
-    padding: 32,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.18,
-    shadowRadius: 16,
-    elevation: 8,
+  headerCard: {
+    alignItems: 'center',
+    padding: 24,
+    marginBottom: 20,
+  },
+  iconContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+    ...shadows.small,
   },
   title: {
-    fontSize: 26,
-    color: '#d4af37',
-    fontWeight: 'bold',
-    marginBottom: 8,
+    ...typography.title1,
+    color: colors.text.primary,
     textAlign: 'center',
-    letterSpacing: 1.2,
+    marginBottom: 8,
+    fontWeight: '700',
   },
-  divider: {
-    height: 1.5,
-    backgroundColor: '#d4af37',
-    opacity: 0.18,
-    marginBottom: 18,
-    borderRadius: 1,
-    width: '80%',
-    alignSelf: 'center',
+  subtitle: {
+    ...typography.callout,
+    color: colors.text.secondary,
+    textAlign: 'center',
+  },
+  formCard: {
+    padding: 24,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    paddingHorizontal: 16,
+    minHeight: 48,
+    ...shadows.small,
+  },
+  inputFocused: {
+    borderColor: colors.primary.main,
+    backgroundColor: colors.background.card,
+    ...shadows.medium,
+  },
+  inputFilled: {
+    backgroundColor: colors.background.card,
   },
   input: {
-    backgroundColor: '#22335a',
-    color: '#fff',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 14,
-    fontSize: 16,
+    flex: 1,
+    ...typography.body,
+    color: colors.text.primary,
+    paddingVertical: 12,
   },
-  button: {
-    backgroundColor: '#d4af37',
-    borderRadius: 10,
-    paddingVertical: 14,
+  textAreaWrapper: {
+    alignItems: 'flex-start',
+    minHeight: 80,
+    paddingVertical: 12,
+  },
+  textArea: {
+    minHeight: 56,
+    textAlignVertical: 'top',
+  },
+  clearButton: {
+    padding: 4,
+  },
+  textAreaClear: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+  },
+  submitButton: {
+    marginVertical: 16,
+  },
+  noteContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: colors.background.secondary,
+    borderRadius: 8,
+    padding: 12,
     marginTop: 8,
   },
-  buttonDisabled: {
-    backgroundColor: '#8a7324',
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: '#182848',
-    fontSize: 17,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    letterSpacing: 0.5,
-  },
   note: {
-    color: '#bbb',
-    fontSize: 12,
-    textAlign: 'center',
-    marginTop: 12,
-    fontStyle: 'italic',
+    ...typography.caption1,
+    color: colors.text.tertiary,
+    marginLeft: 8,
+    flex: 1,
+    lineHeight: 16,
   },
 });
 
