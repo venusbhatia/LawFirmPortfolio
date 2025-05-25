@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "LawFirmPortfolio",
+    "slug": "LawFirmPortfolio",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/splash.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0c1c3c"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourcompany.lawfirmportfolio"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/splash.png",
+        "backgroundColor": "#0c1c3c"
+      }
+    },
+    "web": {
+      "favicon": "./assets/splash.png"
+    }
+  }
+}
