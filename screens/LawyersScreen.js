@@ -14,6 +14,47 @@ import { colors, typography, shadows } from '../theme/colors';
 import { Card } from '../components/Card';
 import databaseService from '../database';
 
+// Import all lawyer images
+const lawyerImages = {
+  lawyer1: require('../assets/lawyers/lawyer1.jpg'),
+  lawyer2: require('../assets/lawyers/lawyer2.jpg'),
+  lawyer3: require('../assets/lawyers/lawyer3.jpg'),
+  lawyer4: require('../assets/lawyers/lawyer4.jpg'),
+  lawyer5: require('../assets/lawyers/lawyer5.jpg'),
+  lawyer6: require('../assets/lawyers/lawyer6.jpg'),
+};
+
+const LawyerImage = ({ source, style }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <View style={[style, { overflow: 'hidden' }]}>
+      <Image 
+        source={source}
+        style={[style, { position: 'absolute' }]}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
+        onError={(error) => {
+          console.log('Image failed to load:', error);
+          setHasError(true);
+          setIsLoading(false);
+        }}
+      />
+      {isLoading && (
+        <View style={[style, styles.imagePlaceholder]}>
+          <ActivityIndicator size="small" color={colors.primary.main} />
+        </View>
+      )}
+      {hasError && (
+        <View style={[style, styles.imagePlaceholder]}>
+          <Ionicons name="person" size={24} color={colors.text.secondary} />
+        </View>
+      )}
+    </View>
+  );
+};
+
 const LawyersScreen = ({ navigation }) => {
   const [lawyers, setLawyers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +75,7 @@ const LawyersScreen = ({ navigation }) => {
           name: 'Richard Davis',
           specialty: 'Criminal Law',
           experience: '20 years',
-          image: 'https://randomuser.me/api/portraits/men/32.jpg',
+          image: lawyerImages.lawyer1,
           bio: 'Richard Davis is a seasoned criminal defense attorney with over 20 years of experience.',
           email: 'richard.davis@legalcare.com',
           phone: '(555) 123-4567'
@@ -44,7 +85,7 @@ const LawyersScreen = ({ navigation }) => {
           name: 'Jane Smith',
           specialty: 'Family Law',
           experience: '15 years',
-          image: 'https://randomuser.me/api/portraits/women/44.jpg',
+          image: lawyerImages.lawyer2,
           bio: 'Jane Smith specializes in family law matters with compassionate service.',
           email: 'jane.smith@legalcare.com',
           phone: '(555) 234-5678'
@@ -54,10 +95,40 @@ const LawyersScreen = ({ navigation }) => {
           name: 'Michael Johnson',
           specialty: 'Corporate Law',
           experience: '18 years',
-          image: 'https://randomuser.me/api/portraits/men/45.jpg',
+          image: lawyerImages.lawyer3,
           bio: 'Michael Johnson provides expert corporate legal counsel for businesses.',
           email: 'michael.johnson@legalcare.com',
           phone: '(555) 345-6789'
+        },
+        {
+          id: 4,
+          name: 'David Wilson',
+          specialty: 'Real Estate Law',
+          experience: '22 years',
+          image: lawyerImages.lawyer4,
+          bio: 'David Wilson is an expert in real estate law and property transactions.',
+          email: 'david.wilson@legalcare.com',
+          phone: '(555) 456-7890'
+        },
+        {
+          id: 5,
+          name: 'Robert Thompson',
+          specialty: 'Tax Law',
+          experience: '25 years',
+          image: lawyerImages.lawyer5,
+          bio: 'Robert Thompson specializes in complex tax law and financial regulations.',
+          email: 'robert.thompson@legalcare.com',
+          phone: '(555) 567-8901'
+        },
+        {
+          id: 6,
+          name: 'Sarah Anderson',
+          specialty: 'Immigration Law',
+          experience: '12 years',
+          image: lawyerImages.lawyer6,
+          bio: 'Sarah Anderson helps clients navigate complex immigration processes.',
+          email: 'sarah.anderson@legalcare.com',
+          phone: '(555) 678-9012'
         }
       ];
       setLawyers(fallbackLawyers);
@@ -134,7 +205,7 @@ const LawyersScreen = ({ navigation }) => {
             >
               <View style={styles.cardContent}>
                 <View style={styles.imageContainer}>
-                  <Image source={{ uri: lawyer.image }} style={styles.image} />
+                  <LawyerImage source={lawyer.image} style={styles.image} />
                   <View style={styles.onlineIndicator} />
                 </View>
                 
@@ -320,6 +391,11 @@ const styles = StyleSheet.create({
   emptySubtext: {
     ...typography.callout,
     color: colors.text.secondary,
+  },
+  imagePlaceholder: {
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

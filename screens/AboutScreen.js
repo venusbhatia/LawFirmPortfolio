@@ -1,48 +1,53 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Platform } from 'react-native';
 import { colors, typography, shadows } from '../theme/colors';
 import { Card } from '../components/Card';
 
 const AboutScreen = () => {
   return (
-    <View style={styles.container}>
-      <ScrollView 
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <Card variant="blur" style={styles.heroCard}>
-          <Text style={styles.title}>About LegalCare</Text>
-          <Text style={styles.description}>
-            Trusted legal representation since 1992. Our team brings decades of experience, 
-            professionalism, and compassion to every case we handle.
-          </Text>
+    <ScrollView 
+      style={styles.container}
+      contentContainerStyle={styles.scrollContainer}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.heroSection}>
+        <Text style={styles.title}>About LegalCare</Text>
+        <Text style={styles.description}>
+          Trusted legal representation since 1992. Our team brings decades of experience, 
+          professionalism, and compassion to every case we handle.
+        </Text>
+      </View>
 
-          <View style={styles.statsContainer}>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>1992</Text>
-              <Text style={styles.statLabel}>Founded</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>30+</Text>
-              <Text style={styles.statLabel}>Years</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>1000+</Text>
-              <Text style={styles.statLabel}>Cases Won</Text>
-            </View>
+      <View style={styles.statsCard}>
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>1992</Text>
+            <Text style={styles.statLabel}>Founded</Text>
           </View>
-        </Card>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>30+</Text>
+            <Text style={styles.statLabel}>Years</Text>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <Text style={styles.statNumber}>100+</Text>
+            <Text style={styles.statLabel}>Cases Won</Text>
+          </View>
+        </View>
+      </View>
 
-        <Card variant="elevated" style={styles.missionCard}>
-          <Text style={styles.missionTitle}>Our Mission</Text>
+      <View style={styles.contentSection}>
+        <View style={styles.missionCard}>
+          <Text style={styles.sectionTitle}>Our Mission</Text>
           <Text style={styles.missionText}>
             To uphold justice and deliver client-focused legal solutions that make a real difference. 
             We pride ourselves on professionalism, ethics, and unwavering commitment to our clients.
           </Text>
-        </Card>
+        </View>
 
-        <Card variant="outlined" style={styles.valuesCard}>
-          <Text style={styles.valuesTitle}>Our Values</Text>
+        <View style={styles.valuesSection}>
+          <Text style={styles.sectionTitle}>Our Values</Text>
           
           <View style={styles.valueItem}>
             <View style={styles.valueIcon}>
@@ -79,110 +84,157 @@ const AboutScreen = () => {
               </Text>
             </View>
           </View>
-        </Card>
-      </ScrollView>
-    </View>
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F7FF',
+    backgroundColor: '#F8FAFC',
   },
   scrollContainer: {
     flexGrow: 1,
-    padding: 20,
   },
-  heroCard: {
-    padding: 32,
-    marginBottom: 20,
-    alignItems: 'center',
+  heroSection: {
+    padding: 24,
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    backgroundColor: '#F1F5F9',
   },
   title: {
-    ...typography.largeTitle,
-    color: colors.text.primary,
-    textAlign: 'center',
-    marginBottom: 16,
+    fontSize: 34,
     fontWeight: '800',
+    color: colors.text.primary,
+    marginBottom: 16,
+    letterSpacing: -0.5,
   },
   description: {
-    ...typography.body,
+    fontSize: 17,
     color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: 30,
     lineHeight: 24,
+    marginBottom: 24,
+  },
+  statsCard: {
+    margin: 16,
+    padding: 20,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginTop: 10,
-  },
-  statCard: {
+    justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.background.secondary,
-    borderRadius: 16,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
+  },
+  statItem: {
     flex: 1,
-    marginHorizontal: 6,
-    ...shadows.small,
-    borderWidth: 0.5,
-    borderColor: colors.border.light,
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   statNumber: {
-    ...typography.title2,
+    fontSize: 28,
+    fontWeight: '700',
     color: colors.primary.main,
-    fontWeight: '800',
     marginBottom: 4,
+    letterSpacing: -0.5,
   },
   statLabel: {
-    ...typography.caption1,
+    fontSize: 14,
     color: colors.text.secondary,
     textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontWeight: '600',
+    letterSpacing: 0.5,
+  },
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: colors.border.light,
+    marginHorizontal: 8,
+  },
+  contentSection: {
+    padding: 16,
+    backgroundColor: '#FFFFFF',
   },
   missionCard: {
     padding: 24,
-    marginBottom: 20,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 24,
+    marginBottom: 32,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
-  missionTitle: {
-    ...typography.title2,
-    color: colors.text.primary,
-    marginBottom: 12,
+  sectionTitle: {
+    fontSize: 22,
     fontWeight: '700',
+    color: colors.text.primary,
+    marginBottom: 16,
+    letterSpacing: -0.3,
   },
   missionText: {
-    ...typography.body,
+    fontSize: 16,
     color: colors.text.secondary,
     lineHeight: 24,
   },
-  valuesCard: {
+  valuesSection: {
     padding: 24,
-    marginBottom: 20,
-  },
-  valuesTitle: {
-    ...typography.title2,
-    color: colors.text.primary,
-    marginBottom: 20,
-    fontWeight: '700',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   valueItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   valueIcon: {
     width: 48,
     height: 48,
-    borderRadius: 12,
+    borderRadius: 16,
     backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 16,
-    ...shadows.small,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   valueEmoji: {
     fontSize: 24,
@@ -192,13 +244,13 @@ const styles = StyleSheet.create({
     paddingTop: 2,
   },
   valueLabel: {
-    ...typography.headline,
+    fontSize: 17,
+    fontWeight: '600',
     color: colors.text.primary,
     marginBottom: 4,
-    fontWeight: '600',
   },
   valueDescription: {
-    ...typography.callout,
+    fontSize: 15,
     color: colors.text.secondary,
     lineHeight: 20,
   },

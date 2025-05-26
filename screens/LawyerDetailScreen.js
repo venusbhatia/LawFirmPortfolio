@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -7,12 +7,44 @@ import {
   ScrollView, 
   TouchableOpacity, 
   Linking, 
-  Alert 
+  Alert, 
+  ActivityIndicator 
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, shadows } from '../theme/colors';
 import { Card } from '../components/Card';
 import { Button } from '../components/Button';
+
+const LawyerImage = ({ source, style }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <View style={[style, { overflow: 'hidden' }]}>
+      <Image 
+        source={source}
+        style={[style, { position: 'absolute' }]}
+        onLoadStart={() => setIsLoading(true)}
+        onLoadEnd={() => setIsLoading(false)}
+        onError={(error) => {
+          console.log('Image failed to load:', error);
+          setHasError(true);
+          setIsLoading(false);
+        }}
+      />
+      {isLoading && (
+        <View style={[style, styles.imagePlaceholder]}>
+          <ActivityIndicator size="small" color={colors.primary.main} />
+        </View>
+      )}
+      {hasError && (
+        <View style={[style, styles.imagePlaceholder]}>
+          <Ionicons name="person" size={40} color={colors.text.secondary} />
+        </View>
+      )}
+    </View>
+  );
+};
 
 const LawyerDetailScreen = ({ route, navigation }) => {
   const { lawyer } = route.params || {};
@@ -70,7 +102,7 @@ const LawyerDetailScreen = ({ route, navigation }) => {
         {/* Profile Header */}
         <Card variant="blur" style={styles.profileCard}>
           <View style={styles.imageContainer}>
-            <Image source={{ uri: lawyer.image }} style={styles.image} />
+            <LawyerImage source={lawyer.image} style={styles.image} />
             <View style={styles.onlineIndicator} />
           </View>
           
@@ -375,6 +407,11 @@ const styles = StyleSheet.create({
   },
   secondaryAction: {
     flex: 1,
+  },
+  imagePlaceholder: {
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
