@@ -128,7 +128,7 @@ const ContactScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: '#F2F7FF',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -138,9 +138,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
     marginBottom: 20,
-    backgroundColor: colors.background.elevated,
-    borderWidth: 1,
-    borderColor: colors.border.light,
   },
   iconContainer: {
     width: 64,
@@ -167,9 +164,6 @@ const styles = StyleSheet.create({
   contactCard: {
     padding: 0,
     marginBottom: 20,
-    backgroundColor: colors.background.elevated,
-    borderWidth: 1,
-    borderColor: colors.border.light,
   },
   contactItem: {
     flexDirection: 'row',
@@ -208,9 +202,6 @@ const styles = StyleSheet.create({
   hoursCard: {
     padding: 20,
     marginBottom: 20,
-    backgroundColor: colors.background.card,
-    borderWidth: 1,
-    borderColor: colors.border.medium,
   },
   hoursHeader: {
     flexDirection: 'row',
@@ -227,8 +218,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     borderRadius: 12,
     padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border.light,
   },
   hoursRow: {
     flexDirection: 'row',
@@ -259,8 +248,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     borderWidth: 1,
     borderColor: colors.warning,
-    backgroundColor: colors.background.secondary,
-    opacity: 0.95,
+    backgroundColor: 'rgba(255, 149, 0, 0.05)',
   },
   emergencyHeader: {
     flexDirection: 'row',
@@ -297,7 +285,6 @@ const styles = StyleSheet.create({
   },
   scheduleButton: {
     marginTop: 8,
-    backgroundColor: colors.primary.main,
   },
 });
 

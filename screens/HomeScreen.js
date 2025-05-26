@@ -7,502 +7,389 @@ import {
   Image, 
   SafeAreaView, 
   ScrollView,
-  Dimensions
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, typography, shadows } from '../theme/colors';
-import { Card } from '../components/Card';
-import { Button } from '../components/Button';
 
 const { width } = Dimensions.get('window');
+const CARD_WIDTH = (width - 48 - 16) / 2;
 
 const NAV_ITEMS = [
-  { label: 'About Us', icon: 'information-circle-outline', screen: 'About', gradient: ['#007AFF', '#5AC8FA'] },
-  { label: 'Our Lawyers', icon: 'people-outline', screen: 'Lawyers', gradient: ['#34C759', '#30D158'] },
-  { label: 'Practice Areas', icon: 'briefcase-outline', screen: 'PracticeAreas', gradient: ['#FF9F0A', '#FFD60A'] },
-  { label: 'Contact Us', icon: 'call-outline', screen: 'Contact', gradient: ['#FF453A', '#FF6B47'] },
-  { label: 'FAQ', icon: 'help-circle-outline', screen: 'FAQ', gradient: ['#AF52DE', '#BF5AF2'] },
-  { label: 'Book Appointment', icon: 'calendar-outline', screen: 'AppointmentBooking', gradient: ['#64D2FF', '#007AFF'] },
+  { 
+    label: 'About Us', 
+    icon: 'information-circle', 
+    screen: 'About',
+    color: '#4338CA'
+  },
+  { 
+    label: 'Our Lawyers', 
+    icon: 'people', 
+    screen: 'Lawyers',
+    color: '#0891B2'
+  },
+  { 
+    label: 'Practice Areas', 
+    icon: 'briefcase', 
+    screen: 'PracticeAreas',
+    color: '#0E7490'
+  },
+  { 
+    label: 'Contact Us', 
+    icon: 'call', 
+    screen: 'Contact',
+    color: '#0D9488'
+  }
 ];
 
 const HomeScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      {/* Animated Background */}
-      <View style={styles.backgroundPattern}>
-        <View style={[styles.circle, styles.circle1]} />
-        <View style={[styles.circle, styles.circle2]} />
-        <View style={[styles.circle, styles.circle3]} />
-      </View>
-      
-      <SafeAreaView style={styles.safeArea}>
-        <ScrollView 
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Premium Navigation Bar */}
-          <View style={styles.navBar}>
-            <Text style={styles.navTitle}>LegalCare</Text>
-            <View style={styles.navAccent} />
-          </View>
-
-          {/* Hero Section */}
-          <View style={styles.heroSection}>
-            <View style={styles.logoContainer}>
-              <View style={styles.logoGlow} />
+    <SafeAreaView style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section */}
+        <View style={styles.heroSection}>
+          <View style={styles.logoContainer}>
+            <View style={styles.logoBackground}>
               <Image 
                 source={require('../assets/lady_justice_logo.png')} 
                 style={styles.logo}
               />
             </View>
-            
-            <Text style={styles.heroTitle}>Justice. Expertise. Trust.</Text>
-            <Text style={styles.heroSubtitle}>Your trusted legal partner since 1992</Text>
-            
-            <Button 
-              title="Book a Consultation"
-              onPress={() => navigation.navigate('AppointmentBooking')}
-              size="large"
-              style={styles.heroButton}
-            />
+            <View style={styles.logoGlow} />
           </View>
+          
+          <Text style={styles.heroTitle}>
+            <Text style={styles.heroTitleHighlight}>Justice.</Text>{' '}
+            <Text style={styles.heroTitleHighlight}>Expertise.</Text>{' '}
+            <Text style={styles.heroTitleHighlight}>Trust.</Text>
+          </Text>
+          <Text style={styles.heroSubtitle}>Your trusted legal partner since 1992</Text>
+          
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AppointmentBooking')}
+            style={styles.heroButton}
+            activeOpacity={0.8}
+          >
+            <View style={styles.buttonBackground}>
+              <Text style={styles.buttonText}>Book a Consultation</Text>
+              <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} style={styles.buttonIcon} />
+            </View>
+          </TouchableOpacity>
+        </View>
 
-          {/* Premium Grid */}
-          <View style={styles.gridSection}>
-            {NAV_ITEMS.map((item, idx) => (
-              <Card
-                key={item.label}
-                variant="glass"
-                onPress={() => navigation.navigate(item.screen)}
-                style={styles.gridCard}
-              >
-                <View style={[styles.iconContainer, { backgroundColor: item.gradient[0] + '20' }]}>
+        {/* Main Actions Grid */}
+        <View style={styles.gridSection}>
+          {NAV_ITEMS.map((item, idx) => (
+            <TouchableOpacity
+              key={item.label}
+              onPress={() => navigation.navigate(item.screen)}
+              style={[styles.gridCard, { backgroundColor: item.color }]}
+              activeOpacity={0.9}
+            >
+              <View style={styles.cardContent}>
+                <View style={styles.iconContainer}>
                   <Ionicons 
                     name={item.icon} 
-                    size={24} 
-                    color={item.gradient[0]} 
+                    size={32} 
+                    color={colors.text.inverse}
+                    style={styles.icon}
                   />
-                  <View style={[styles.iconGlow, { backgroundColor: item.gradient[0] }]} />
                 </View>
                 <Text style={styles.gridLabel}>{item.label}</Text>
-                <View style={styles.cardShimmer} />
-              </Card>
-            ))}
-          </View>
+                <Ionicons 
+                  name="chevron-forward" 
+                  size={20} 
+                  color={colors.text.inverse}
+                  style={styles.cardArrow}
+                />
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-          {/* Elegant Stats */}
-          <Card variant="glass" style={styles.statsCard}>
-            <Text style={styles.statsTitle}>Our Excellence</Text>
+        {/* Stats Section */}
+        <View style={styles.statsSection}>
+          <View style={styles.statsCard}>
             <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>1992</Text>
+                <Text style={styles.statLabel}>Founded</Text>
+              </View>
+              <View style={styles.statDivider} />
               <View style={styles.statItem}>
                 <Text style={styles.statNumber}>30+</Text>
                 <Text style={styles.statLabel}>Years</Text>
-                <View style={[styles.statGlow, { backgroundColor: colors.primary.main }]} />
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statNumber}>1000+</Text>
+                <Text style={styles.statNumber}>100+</Text>
                 <Text style={styles.statLabel}>Cases Won</Text>
-                <View style={[styles.statGlow, { backgroundColor: colors.success }]} />
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.statItem}>
-                <Text style={styles.statNumber}>98%</Text>
-                <Text style={styles.statLabel}>Success Rate</Text>
-                <View style={[styles.statGlow, { backgroundColor: colors.gold }]} />
               </View>
             </View>
-          </Card>
-
-          {/* Premium Footer */}
-          <View style={styles.footer}>
-            <View style={styles.socialRow}>
-              {['logo-linkedin', 'logo-twitter', 'logo-facebook'].map((icon, idx) => (
-                <TouchableOpacity key={idx} style={styles.socialButton}>
-                  <Ionicons name={icon} size={20} color={colors.primary.main} />
-                  <View style={styles.socialGlow} />
-                </TouchableOpacity>
-              ))}
-            </View>
-            <Text style={styles.footerText}>© 2024 LegalCare Professional Services</Text>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </View>
+        </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <View style={styles.socialRow}>
+            {['logo-linkedin', 'logo-twitter', 'logo-facebook'].map((icon, idx) => (
+              <TouchableOpacity 
+                key={icon} 
+                style={styles.socialButton}
+                activeOpacity={0.8}
+              >
+                <View style={styles.socialContent}>
+                  <Ionicons name={icon} size={20} color={colors.text.accent} />
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Text style={styles.footerText}>© 2024 LegalCare Professional Services</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
-  },
-  backgroundPattern: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  circle: {
-    position: 'absolute',
-    borderRadius: 1000,
-    opacity: 0.1,
-  },
-  circle1: {
-    width: 300,
-    height: 300,
-    backgroundColor: colors.primary.main,
-    top: -150,
-    right: -150,
-  },
-  circle2: {
-    width: 200,
-    height: 200,
-    backgroundColor: colors.success,
-    bottom: 100,
-    left: -100,
-  },
-  circle3: {
-    width: 150,
-    height: 150,
-    backgroundColor: colors.gold,
-    top: '50%',
-    right: -75,
-  },
-  safeArea: {
-    flex: 1,
+    backgroundColor: '#F8FAFC',
   },
   scrollContainer: {
     flexGrow: 1,
   },
-  navBar: {
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  navTitle: {
-    ...typography.title1,
-    color: colors.text.primary,
-    fontWeight: '800',
-  },
-  navAccent: {
-    position: 'absolute',
-    bottom: 0,
-    width: 60,
-    height: 3,
-    backgroundColor: colors.primary.main,
-    borderRadius: 2,
-  },
   heroSection: {
     alignItems: 'center',
-    paddingTop: 40,
-    paddingBottom: 50,
-    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingBottom: 40,
+    paddingHorizontal: 24,
+    backgroundColor: '#F1F5F9',
   },
   logoContainer: {
     position: 'relative',
-    marginBottom: 40,
+    marginBottom: 32,
+    alignItems: 'center',
+  },
+  logoBackground: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: colors.secondary.main,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.secondary.main,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
+  },
+  logo: {
+    width: 70,
+    height: 70,
+    resizeMode: 'contain',
+    tintColor: '#FFFFFF',
   },
   logoGlow: {
     position: 'absolute',
-    top: -20,
-    left: -20,
-    right: -20,
-    bottom: -20,
-    borderRadius: 80,
-    backgroundColor: colors.primary.main,
-    opacity: 0.2,
-    ...shadows.glow,
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    resizeMode: 'contain',
-    borderRadius: 60,
-    backgroundColor: colors.background.glass,
-    borderWidth: 2,
-    borderColor: colors.border.light,
+    top: -10,
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: colors.secondary.main,
+    opacity: 0.15,
+    zIndex: -1,
   },
   heroTitle: {
     ...typography.largeTitle,
     color: colors.text.primary,
     textAlign: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
+    lineHeight: 48,
+  },
+  heroTitleHighlight: {
+    color: colors.primary.main,
     fontWeight: '900',
   },
   heroSubtitle: {
     ...typography.title3,
     color: colors.text.secondary,
     textAlign: 'center',
-    marginBottom: 40,
-    fontWeight: '500',
+    marginBottom: 32,
   },
   heroButton: {
-    paddingHorizontal: 40,
-    paddingVertical: 16,
+    width: '100%',
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.accent.main,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.accent.main,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  buttonBackground: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  buttonText: {
+    ...typography.headline,
+    color: colors.text.inverse,
+    fontWeight: '600',
+    marginRight: 8,
+  },
+  buttonIcon: {
+    marginLeft: 4,
   },
   gridSection: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 10,
+    padding: 16,
+    gap: 16,
+    backgroundColor: '#FFFFFF',
   },
   gridCard: {
-    width: (width - 60) / 2,
-    marginBottom: 20,
-    alignItems: 'center',
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    position: 'relative',
-    overflow: 'hidden',
+    width: CARD_WIDTH,
+    height: CARD_WIDTH * 0.8,
+    borderRadius: 20,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
+  },
+  cardContent: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'space-between',
   },
   iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    position: 'relative',
-    ...shadows.medium,
+    marginBottom: 12,
   },
-  iconGlow: {
-    position: 'absolute',
-    top: -5,
-    left: -5,
-    right: -5,
-    bottom: -5,
-    borderRadius: 25,
-    opacity: 0.3,
+  icon: {
+    opacity: 0.9,
   },
   gridLabel: {
-    ...typography.callout,
-    color: colors.text.primary,
-    textAlign: 'center',
+    ...typography.headline,
+    color: colors.text.inverse,
     fontWeight: '600',
-    zIndex: 1,
   },
-  cardShimmer: {
+  cardArrow: {
     position: 'absolute',
-    top: 0,
-    left: -100,
-    right: -100,
-    bottom: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    transform: [{ skewX: '-15deg' }],
+    bottom: 20,
+    right: 20,
+    opacity: 0.8,
+  },
+  statsSection: {
+    padding: 16,
+    backgroundColor: '#FFFFFF',
   },
   statsCard: {
-    marginHorizontal: 20,
-    marginBottom: 30,
-    padding: 30,
-  },
-  statsTitle: {
-    ...typography.title2,
-    color: colors.text.primary,
-    textAlign: 'center',
-    marginBottom: 25,
-    fontWeight: '700',
+    borderRadius: 24,
+    padding: 20,
+    backgroundColor: '#F8FAFC',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.06,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   statItem: {
-    alignItems: 'center',
     flex: 1,
-    position: 'relative',
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   statNumber: {
-    ...typography.largeTitle,
-    color: colors.text.primary,
-    fontWeight: '900',
+    fontSize: 28,
+    fontWeight: '700',
+    color: colors.primary.main,
     marginBottom: 4,
+    letterSpacing: -0.5,
   },
   statLabel: {
-    ...typography.caption1,
-    color: colors.text.tertiary,
+    fontSize: 14,
+    color: colors.text.secondary,
     textTransform: 'uppercase',
-    letterSpacing: 1.5,
-    fontWeight: '600',
-  },
-  statGlow: {
-    position: 'absolute',
-    top: -10,
-    left: -10,
-    right: -10,
-    bottom: -10,
-    borderRadius: 50,
-    opacity: 0.1,
+    letterSpacing: 0.5,
   },
   statDivider: {
     width: 1,
     height: 40,
-    backgroundColor: colors.border.medium,
-    marginHorizontal: 15,
+    backgroundColor: colors.border.light,
+    marginHorizontal: 8,
   },
   footer: {
+    paddingTop: 48,
+    paddingBottom: 32,
     alignItems: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-    marginTop: 20,
+    backgroundColor: '#FFFFFF',
   },
   socialRow: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  socialButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: colors.background.card,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 10,
-    position: 'relative',
-    ...shadows.medium,
-  },
-  socialGlow: {
-    position: 'absolute',
-    top: -2,
-    left: -2,
-    right: -2,
-    bottom: -2,
-    borderRadius: 27,
-    backgroundColor: colors.primary.main,
-    opacity: 0.2,
-  },
-  footerText: {
-    ...typography.caption1,
-    color: colors.text.tertiary,
-    textAlign: 'center',
-  },
-});center',
-    marginBottom: 12,
-    fontWeight: '800',
-  },
-  heroSubtitle: {
-    ...typography.title3,
-    color: colors.text.secondary,
-    textAlign: 'center',
-    marginBottom: 30,
-    fontWeight: '500',
-  },
-  heroButton: {
-    marginTop: 10,
-    paddingHorizontal: 32,
-    backgroundColor: colors.primary.main,
-  },
-  gridSection: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: 10,
-  },
-  gridCard: {
-    width: '47%',
-    marginBottom: 16,
-    alignItems: 'center',
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    backgroundColor: colors.background.card,
-    borderWidth: 1,
-    borderColor: colors.border.light,
-  },
-  iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: colors.background.secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-    ...shadows.small,
-  },
-  gridLabel: {
-    ...typography.callout,
-    color: colors.text.primary,
-    textAlign: 'center',
-    fontWeight: '600',
-  },
-  statsCard: {
-    marginHorizontal: 20,
-    marginBottom: 30,
-    padding: 24,
-    backgroundColor: colors.background.elevated,
-    borderWidth: 1,
-    borderColor: colors.border.light,
-  },
-  statsTitle: {
-    ...typography.title3,
-    color: colors.text.primary,
-    textAlign: 'center',
-    marginBottom: 20,
-    fontWeight: '700',
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-  },
-  statItem: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  statNumber: {
-    ...typography.title1,
-    color: colors.primary.main,
-    fontWeight: '800',
-    marginBottom: 4,
-  },
-  statLabel: {
-    ...typography.footnote,
-    color: colors.text.secondary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    fontWeight: '600',
-  },
-  statDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: colors.border.medium,
-    marginHorizontal: 10,
-  },
-  footer: {
-    alignItems: 'center',
-    paddingVertical: 30,
-    paddingHorizontal: 20,
-    backgroundColor: colors.background.secondary,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.light,
-    marginTop: 20,
-  },
-  socialRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 16,
+    gap: 16,
+    marginBottom: 24,
   },
   socialButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.background.card,
+    backgroundColor: colors.background.secondary,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  socialContent: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 8,
-    ...shadows.small,
-    borderWidth: 1,
-    borderColor: colors.border.light,
   },
   footerText: {
-    ...typography.caption1,
+    ...typography.footnote,
     color: colors.text.tertiary,
-    textAlign: 'center',
   },
 });
 
