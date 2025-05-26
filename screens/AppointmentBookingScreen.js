@@ -220,7 +220,7 @@ const AppointmentBookingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F7FF',
+    backgroundColor: colors.background.primary,
   },
   keyboardAvoid: {
     flex: 1,
@@ -233,6 +233,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
     marginBottom: 20,
+    backgroundColor: colors.background.elevated,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   iconContainer: {
     width: 64,
@@ -258,6 +261,9 @@ const styles = StyleSheet.create({
   },
   formCard: {
     padding: 24,
+    backgroundColor: colors.background.elevated,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   inputContainer: {
     marginBottom: 20,
@@ -265,7 +271,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.background.card,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: colors.border.light,
@@ -275,11 +281,11 @@ const styles = StyleSheet.create({
   },
   inputFocused: {
     borderColor: colors.primary.main,
-    backgroundColor: colors.background.card,
+    backgroundColor: colors.background.tertiary,
     ...shadows.medium,
   },
   inputFilled: {
-    backgroundColor: colors.background.card,
+    backgroundColor: colors.background.tertiary,
   },
   input: {
     flex: 1,
@@ -306,6 +312,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginVertical: 16,
+    backgroundColor: colors.primary.main,
   },
   noteContainer: {
     flexDirection: 'row',
@@ -314,10 +321,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
+    borderWidth: 1,
+    borderColor: colors.primary.light,
+    opacity: 0.9,
   },
   note: {
     ...typography.caption1,
-    color: colors.text.tertiary,
+    color: colors.text.secondary,
     marginLeft: 8,
     flex: 1,
     lineHeight: 16,

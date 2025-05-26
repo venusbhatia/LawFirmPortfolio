@@ -61,7 +61,7 @@ const PracticeAreasScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F7FF',
+    backgroundColor: colors.background.primary,
   },
   headerContainer: {
     padding: 20,
@@ -70,6 +70,9 @@ const styles = StyleSheet.create({
   headerCard: {
     alignItems: 'center',
     padding: 24,
+    backgroundColor: colors.background.elevated,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   headerIconContainer: {
     width: 64,
@@ -105,6 +108,9 @@ const styles = StyleSheet.create({
     position: 'relative',
     minHeight: 160,
     justifyContent: 'center',
+    backgroundColor: colors.background.elevated,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   iconContainer: {
     width: 64,
@@ -127,7 +133,7 @@ const styles = StyleSheet.create({
     right: -4,
     bottom: -4,
     borderRadius: 24,
-    opacity: 0.1,
+    opacity: 0.15,
     zIndex: 0,
   },
   cardTitle: {
@@ -147,6 +153,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
 });
 

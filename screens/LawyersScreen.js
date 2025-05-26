@@ -181,7 +181,7 @@ const LawyersScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F7FF',
+    backgroundColor: colors.background.primary,
   },
   centered: {
     justifyContent: 'center',
@@ -195,6 +195,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
     marginBottom: 20,
+    backgroundColor: colors.background.elevated,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   iconContainer: {
     width: 64,
@@ -221,6 +224,9 @@ const styles = StyleSheet.create({
   lawyerCard: {
     marginBottom: 16,
     padding: 20,
+    backgroundColor: colors.background.elevated,
+    borderWidth: 1,
+    borderColor: colors.border.light,
   },
   cardContent: {
     flexDirection: 'row',
@@ -246,7 +252,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: colors.success,
     borderWidth: 2,
-    borderColor: colors.background.card,
+    borderColor: colors.background.elevated,
   },
   info: {
     flex: 1,
@@ -267,7 +273,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     alignSelf: 'flex-start',
     borderWidth: 0.5,
-    borderColor: colors.border.light,
+    borderColor: colors.primary.light,
   },
   specialty: {
     ...typography.caption1,
@@ -310,6 +316,9 @@ const styles = StyleSheet.create({
   emptyCard: {
     alignItems: 'center',
     padding: 40,
+    backgroundColor: colors.background.card,
+    borderWidth: 1,
+    borderColor: colors.border.medium,
   },
   emptyText: {
     ...typography.headline,

@@ -30,26 +30,36 @@ export const Card = ({
 
 const styles = StyleSheet.create({
   base: {
-    borderRadius: 16,
-    padding: 16,
+    borderRadius: 20,
+    padding: 20,
     ...shadows.card,
   },
   default: {
     backgroundColor: colors.background.card,
-    borderWidth: 0.5,
+    borderWidth: 1,
     borderColor: colors.border.light,
   },
   elevated: {
     backgroundColor: colors.background.elevated,
+    borderWidth: 1,
+    borderColor: colors.border.medium,
     ...shadows.medium,
   },
   outlined: {
-    backgroundColor: colors.background.secondary,
+    backgroundColor: colors.background.tertiary,
     borderWidth: 1,
-    borderColor: colors.border.medium,
+    borderColor: colors.border.dark,
   },
   blur: {
     backgroundColor: colors.background.blur,
+    borderWidth: 1,
+    borderColor: colors.border.light,
     ...shadows.large,
+  },
+  glass: {
+    backgroundColor: colors.background.glass,
+    borderWidth: 1,
+    borderColor: colors.border.light,
+    ...shadows.glow,
   },
 });

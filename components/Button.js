@@ -60,6 +60,7 @@ const styles = StyleSheet.create({
   // Variants
   primary: {
     backgroundColor: colors.primary.main,
+    ...shadows.glow,
   },
   secondary: {
     backgroundColor: colors.background.elevated,
@@ -68,7 +69,7 @@ const styles = StyleSheet.create({
   },
   outlined: {
     backgroundColor: 'transparent',
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: colors.primary.main,
   },
   ghost: {
@@ -98,10 +99,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   primaryText: {
-    color: colors.text.inverse,
+    color: colors.text.primary,
   },
   secondaryText: {
-    color: colors.text.primary,
+    color: colors.text.secondary,
   },
   outlinedText: {
     color: colors.primary.main,
